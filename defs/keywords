@@ -40,6 +40,9 @@ return, {keyword_return, keyword_return}, EXPR_MID
 self, {keyword_self, keyword_self}, EXPR_END
 super, {keyword_super, keyword_super}, EXPR_ARG
 then, {keyword_then, keyword_then}, EXPR_BEG
+perhaps, {keyword_perhaps, keyword_perhaps}, EXPR_BEG
+maybe, {keyword_maybe, keyword_maybe}, EXPR_BEG
+probably, {keyword_probably, keyword_probably}, EXPR_BEG
 true, {keyword_true, keyword_true}, EXPR_END
 undef, {keyword_undef, keyword_undef}, EXPR_FNAME
 unless, {keyword_unless, modifier_unless}, EXPR_VALUE

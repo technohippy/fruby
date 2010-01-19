@@ -330,8 +330,9 @@ static int yylex(void*, void*);
 static NODE* node_newnode(struct parser_params *, enum node_type, VALUE, VALUE, VALUE);
 #define rb_node_newnode(type, a1, a2, a3) node_newnode(parser, type, a1, a2, a3)
 
-static NODE *cond_gen(struct parser_params*,NODE*);
-#define cond(node) cond_gen(parser, node)
+static NODE *cond_gen(struct parser_params*,NODE*, float);
+#define cond(node) cond_gen(parser, node, 1.0)
+#define mcond(node,maybe) cond_gen(parser, node, maybe)
 static NODE *logop_gen(struct parser_params*,enum node_type,NODE*,NODE*);
 #define logop(type,node1,node2) logop_gen(parser, type, node1, node2)
 
@@ -636,6 +637,9 @@ static void token_info_pop(struct parser_params*, const char *token);
 	keyword_if
 	keyword_unless
 	keyword_then
+	keyword_perhaps
+	keyword_maybe
+	keyword_probably
 	keyword_elsif
 	keyword_else
 	keyword_case
@@ -705,6 +709,7 @@ static void token_info_pop(struct parser_params*, const char *token);
 /*%%%*/
 /*%
 %type <val> program reswords then do dot_or_colon
+%type <val> perhaps maybe probably
 %*/
 %token tUPLUS		/* unary+ */
 %token tUMINUS		/* unary- */
@@ -1860,7 +1865,7 @@ reswords	: keyword__LINE__ | keyword__FILE__ | keyword__ENCODING__
 		| keyword_for | keyword_in | keyword_module | keyword_next
 		| keyword_nil | keyword_not | keyword_or | keyword_redo
 		| keyword_rescue | keyword_retry | keyword_return | keyword_self
-		| keyword_super | keyword_then | keyword_true | keyword_undef
+		| keyword_super | keyword_then | keyword_perhaps | keyword_maybe | keyword_probably | keyword_true | keyword_undef
 		| keyword_when | keyword_yield | keyword_if | keyword_unless
 		| keyword_while | keyword_until
 		;
@@ -2750,6 +2755,42 @@ primary		: literal
 			$$ = dispatch3(if, $2, $4, escape_Qundef($5));
 		    %*/
 		    }
+		| k_if expr_value perhaps
+		  compstmt
+		  if_tail
+		  k_end
+		    {
+		    /*%%%*/
+			$$ = NEW_IF(mcond($2, 0.2), $4, $5);
+			fixpos($$, $2);
+		    /*%
+			$$ = dispatch3(if, $2, $4, escape_Qundef($5));
+		    %*/
+		    }
+		| k_if expr_value maybe
+		  compstmt
+		  if_tail
+		  k_end
+		    {
+		    /*%%%*/
+			$$ = NEW_IF(mcond($2, 0.5), $4, $5);
+			fixpos($$, $2);
+		    /*%
+			$$ = dispatch3(if, $2, $4, escape_Qundef($5));
+		    %*/
+		    }
+		| k_if expr_value probably
+		  compstmt
+		  if_tail
+		  k_end
+		    {
+		    /*%%%*/
+			$$ = NEW_IF(mcond($2, 0.8), $4, $5);
+			fixpos($$, $2);
+		    /*%
+			$$ = dispatch3(if, $2, $4, escape_Qundef($5));
+		    %*/
+		    }
 		| k_unless expr_value then
 		  compstmt
 		  opt_else
@@ -3109,6 +3150,30 @@ then		: term
 		    %*/
 		| keyword_then
 		| term keyword_then
+		    /*%c%*/
+		    /*%c
+		    { $$ = $2; }
+		    %*/
+		;
+
+perhaps		: keyword_perhaps
+		| term keyword_perhaps
+		    /*%c%*/
+		    /*%c
+		    { $$ = $2; }
+		    %*/
+		;
+
+maybe		: keyword_maybe
+		| term keyword_maybe
+		    /*%c%*/
+		    /*%c
+		    { $$ = $2; }
+		    %*/
+		;
+
+probably	: keyword_probably
+		| term keyword_probably
 		    /*%c%*/
 		    /*%c
 		    { $$ = $2; }
@@ -8735,10 +8800,17 @@ cond0(struct parser_params *parser, NODE *node)
 }
 
 static NODE*
-cond_gen(struct parser_params *parser, NODE *node)
+cond_gen(struct parser_params *parser, NODE *node, float maybe)
 {
+    NODE *mcond;
     if (node == 0) return 0;
-    return cond0(parser, node);
+    if (maybe == 1.0) { // then
+      return cond0(parser, node);
+    }
+    else { // maybe
+      mcond = call_bin_op(NEW_LIT(rb_float_new(maybe)), tGEQ, NEW_FCALL(rb_intern("rand"), 0));
+      return cond_gen(parser, NEW_NODE(NODE_AND, node, mcond, 0), 1.0);
+    }
 }
 
 static NODE*
@@ -10121,6 +10193,9 @@ static const struct kw_assoc {
     {keyword_if,	"if"},
     {keyword_unless,	"unless"},
     {keyword_then,	"then"},
+    {keyword_perhaps,	"perhaps"},
+    {keyword_maybe,	"maybe"},
+    {keyword_probably,	"probably"},
     {keyword_elsif,	"elsif"},
     {keyword_else,	"else"},
     {keyword_case,	"case"},

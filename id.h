@@ -37,6 +37,7 @@
 
 enum ruby_method_ids {
 #ifndef tLAST_TOKEN
+/*
     tUPLUS = 321,
     tUMINUS = 322,
     tPOW = 323,
@@ -69,6 +70,39 @@ enum ruby_method_ids {
     id_core_define_singleton_method = 374,
     id_core_set_postexe = 375,
     tLAST_TOKEN = 376,
+*/
+    tUPLUS = 324,
+    tUMINUS = 325,
+    tPOW = 326,
+    tCMP = 327,
+    tEQ = 328,
+    tEQQ = 329,
+    tNEQ = 330,
+    tGEQ = 331,
+    tLEQ = 332,
+    tANDOP = 333,
+    tOROP = 334,
+    tMATCH = 335,
+    tNMATCH = 336,
+    tDOT2 = 337,
+    tDOT3 = 338,
+    tAREF = 339,
+    tASET = 340,
+    tLSHFT = 341,
+    tRSHFT = 342,
+    tLAMBDA = 355,
+    idNULL = 368,
+    idRespond_to = 369,
+    idIFUNC = 370,
+    idCFUNC = 371,
+    idThrowState = 372,
+    id_core_set_method_alias = 373,
+    id_core_set_variable_alias = 374,
+    id_core_undef_method = 375,
+    id_core_define_method = 376,
+    id_core_define_singleton_method = 377,
+    id_core_set_postexe = 378,
+    tLAST_TOKEN = 379,
 #endif
     idPLUS = '+',
     idMINUS = '-',
@@ -125,6 +159,7 @@ enum ruby_method_ids {
 struct ruby_method_ids_check {
 #define ruby_method_id_check_for(name, value) \
     int checking_for_##name[name == value ? 1 : -1]
+/*
 ruby_method_id_check_for(tUPLUS, 321);
 ruby_method_id_check_for(tUMINUS, 322);
 ruby_method_id_check_for(tPOW, 323);
@@ -157,6 +192,39 @@ ruby_method_id_check_for(id_core_define_method, 373);
 ruby_method_id_check_for(id_core_define_singleton_method, 374);
 ruby_method_id_check_for(id_core_set_postexe, 375);
 ruby_method_id_check_for(tLAST_TOKEN, 376);
+*/
+ruby_method_id_check_for(tUPLUS, 324);
+ruby_method_id_check_for(tUMINUS, 325);
+ruby_method_id_check_for(tPOW, 326);
+ruby_method_id_check_for(tCMP, 327);
+ruby_method_id_check_for(tEQ, 328);
+ruby_method_id_check_for(tEQQ, 329);
+ruby_method_id_check_for(tNEQ, 330);
+ruby_method_id_check_for(tGEQ, 331);
+ruby_method_id_check_for(tLEQ, 332);
+ruby_method_id_check_for(tANDOP, 333);
+ruby_method_id_check_for(tOROP, 334);
+ruby_method_id_check_for(tMATCH, 335);
+ruby_method_id_check_for(tNMATCH, 336);
+ruby_method_id_check_for(tDOT2, 337);
+ruby_method_id_check_for(tDOT3, 338);
+ruby_method_id_check_for(tAREF, 339);
+ruby_method_id_check_for(tASET, 340);
+ruby_method_id_check_for(tLSHFT, 341);
+ruby_method_id_check_for(tRSHFT, 342);
+ruby_method_id_check_for(tLAMBDA, 355);
+ruby_method_id_check_for(idNULL, 368);
+ruby_method_id_check_for(idRespond_to, 369);
+ruby_method_id_check_for(idIFUNC, 370);
+ruby_method_id_check_for(idCFUNC, 371);
+ruby_method_id_check_for(idThrowState, 372);
+ruby_method_id_check_for(id_core_set_method_alias, 373);
+ruby_method_id_check_for(id_core_set_variable_alias, 374);
+ruby_method_id_check_for(id_core_undef_method, 375);
+ruby_method_id_check_for(id_core_define_method, 376);
+ruby_method_id_check_for(id_core_define_singleton_method, 377);
+ruby_method_id_check_for(id_core_set_postexe, 378);
+ruby_method_id_check_for(tLAST_TOKEN, 379);
 };
 #endif
 
